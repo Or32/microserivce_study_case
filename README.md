@@ -12,44 +12,18 @@ Every activity receives `RequestContext`; `RequestLogger` adds `requestId=...` t
 ## Architecture flow
 
 ```mermaid
-flowchart TB
+flowchart LR
   client[Client] --> api[workflow-service HTTP API]
-  api -->|starts onboarding or payment workflow| temporal[(Temporal)]
-  temporal -->|workflow task queue| workflow[workflow-service\nworkflow worker]
-
-  workflow -->|validation-activities| temporal
-  temporal --> validation[validation-service]
-  workflow -->|customer-provisioning-activities| temporal
-  temporal --> provisioning[customer-provisioning-service]
-  workflow -->|welcome-email-activities| temporal
-  temporal --> email[welcome-email-service]
-  workflow -->|payment-charging-activities| temporal
-  temporal --> charging[payment-charging-service]
-  workflow -->|receipt-activities| temporal
-  temporal --> receipt[receipt-service]
-  workflow -->|client-update-activities| temporal
-  temporal --> update[client-update-service]
-
-  contracts[activity-contracts\ntyped activity interfaces and request types]
-  utils[activity-utils\nworker lifecycle and request logging]
-  contracts -.-> workflow
-  contracts -.-> validation
-  contracts -.-> provisioning
-  contracts -.-> email
-  contracts -.-> charging
-  contracts -.-> receipt
-  contracts -.-> update
-  utils -.-> validation
-  utils -.-> provisioning
-  utils -.-> email
-  utils -.-> charging
-  utils -.-> receipt
-  utils -.-> update
+  api -->|start workflow| temporal[(Temporal)]
+  temporal -->|manages workflow steps| queues[Activity task queues]
+  queues --> onboarding[Onboarding activity steps]
+  queues --> payment[Payment activity steps]
+  onboarding --> notification
+  payment --> notification
+  notification[Client notification\nshared final step]
 ```
 
-- Onboarding runs: validation → customer provisioning → welcome email → client update.
-- Payment runs: validation → payment charging → receipt → client update.
-- Each activity service polls only its own queue, while the workflow service depends only on `activity-contracts`; activity workers additionally use `activity-utils`.
+Temporal persists and coordinates the flow, then routes every activity to its dedicated task queue. Both flows finish with the shared client-notification activity.
 
 ## Repository layout
 
