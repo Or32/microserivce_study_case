@@ -1,0 +1,159 @@
+services:
+  temporal:
+    image: temporalio/auto-setup:1.28.1
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=temporal-postgresql
+    depends_on:
+      temporal-postgresql:
+        condition: service_healthy
+  temporal-postgresql:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=temporal
+      - POSTGRES_PASSWORD=temporal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - temporal-postgresql-data:/var/lib/postgresql/data
+  temporal-ui:
+    image: temporalio/ui:2.34.0
+    ports:
+      - "8081:8080"
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    depends_on:
+      - temporal
+  loki:
+    image: grafana/loki:3.7.0
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+  grafana:
+    image: grafana/grafana:12.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - loki
+  workflow-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/workflow-service
+        MAIN_CLASS: com.example.showcase.Application
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=workflow-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    ports:
+      - "8080:8080"
+    depends_on:
+      - temporal
+      - loki
+  validation-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/validation-service
+        MAIN_CLASS: com.example.showcase.ValidationApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=validation-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+  customer-provisioning-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/customer-provisioning-service
+        MAIN_CLASS: com.example.showcase.CustomerProvisioningApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=customer-provisioning-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+  welcome-email-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/welcome-email-service
+        MAIN_CLASS: com.example.showcase.WelcomeEmailApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=welcome-email-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+  payment-charging-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/payment-charging-service
+        MAIN_CLASS: com.example.showcase.PaymentChargingApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=payment-charging-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+  receipt-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/receipt-service
+        MAIN_CLASS: com.example.showcase.ReceiptApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=receipt-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+  client-update-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        SERVICE_MODULE: services/client-update-service
+        MAIN_CLASS: com.example.showcase.ClientUpdateApplication
+    environment:
+      - TEMPORAL_TARGET=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+      - SERVICE_NAME=client-update-service
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      - temporal
+      - loki
+volumes:
+  temporal-postgresql-data:

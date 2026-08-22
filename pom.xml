@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.micronaut.platform</groupId><artifactId>micronaut-parent</artifactId><version>4.10.17</version>
+  </parent>
+  <groupId>com.example</groupId><artifactId>temporal-micronaut-showcase</artifactId><version>0.1.0</version><packaging>pom</packaging>
+  <properties><maven.compiler.release>17</maven.compiler.release><temporal.version>1.38.0</temporal.version><loki4j.version>2.1.0</loki4j.version></properties>
+  <modules>
+    <module>shared/activity-contracts</module>
+    <module>shared/activity-utils</module>
+    <module>services/workflow-service</module>
+    <module>services/validation-service</module>
+    <module>services/customer-provisioning-service</module>
+    <module>services/welcome-email-service</module>
+    <module>services/payment-charging-service</module>
+    <module>services/receipt-service</module>
+    <module>services/client-update-service</module>
+  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+  </dependencies>
+  <build><plugins><plugin><groupId>io.micronaut.maven</groupId><artifactId>micronaut-maven-plugin</artifactId></plugin></plugins></build>
+</project>

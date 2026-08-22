@@ -1,0 +1,7 @@
+micronaut:
+  application:
+    name: validation-service
+temporal:
+  target: ${TEMPORAL_TARGET:localhost:7233}
+  namespace: ${TEMPORAL_NAMESPACE:default}
+  task-queue: validation-activities

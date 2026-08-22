@@ -1,0 +1,13 @@
+micronaut:
+  application:
+    name: temporal-micronaut-showcase
+  server:
+    port: 8080
+temporal:
+  target: ${TEMPORAL_TARGET:localhost:7233}
+  namespace: ${TEMPORAL_NAMESPACE:default}
+  task-queue: request-flows
+
+logger:
+  levels:
+    com.example.showcase: INFO
