@@ -45,6 +45,8 @@ shared/
 
 ## Run
 
+Local builds require JDK 25. The included Docker build uses Eclipse Temurin 25.
+
 Build and start the entire system: Temporal, its UI at <http://localhost:8081>, Loki, Grafana at <http://localhost:3000>, the workflow API, and all activity services:
 
 ```bash

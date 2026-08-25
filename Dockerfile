@@ -1,4 +1,4 @@
-FROM maven:3.9.11-eclipse-temurin-17 AS build
+FROM maven:3.9.11-eclipse-temurin-25 AS build
 
 ARG SERVICE_MODULE
 WORKDIR /workspace
@@ -10,7 +10,7 @@ COPY services services
 RUN mvn -pl "${SERVICE_MODULE}" -am -DskipTests package \
     && cp "${SERVICE_MODULE}/target/$(basename "${SERVICE_MODULE}")-0.1.0.jar" /tmp/app.jar
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 
 ARG MAIN_CLASS
 ENV MAIN_CLASS=${MAIN_CLASS}
