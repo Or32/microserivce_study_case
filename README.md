@@ -110,11 +110,26 @@ make offline-bundle
 IMAGE_PLATFORM=linux/amd64 make offline-bundle
 ```
 
+On Windows, run the equivalent PowerShell script:
+
+```powershell
+.\scripts\prepare-offline-bundle.ps1
+# For an x86_64 Linux target:
+.\scripts\prepare-offline-bundle.ps1 -ImagePlatform linux/amd64
+```
+
 Copy the source repository and the generated `offline-bundle/` directory to the on-prem host. The host needs Docker Compose, JDK 21, and no internet access. Load the images and Maven cache:
 
 ```bash
 docker load --input offline-bundle/images.tar
 make offline-install-maven-cache
+```
+
+On Windows, use:
+
+```powershell
+docker load --input offline-bundle\images.tar
+.\scripts\install-offline-maven-cache.ps1
 ```
 
 Start the infrastructure without pulling images:
