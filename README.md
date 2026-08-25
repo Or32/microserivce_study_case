@@ -1,6 +1,6 @@
-# Temporal + Micronaut request-flow showcase
+# Kotlin + Temporal + Micronaut request-flow showcase
 
-This is a multi-service Micronaut + Temporal project. `workflow-service` exposes the HTTP API and runs only workflow orchestration. Every activity runs in its own independently deployable Micronaut worker service.
+This is a Kotlin multi-service Micronaut + Temporal project. `workflow-service` exposes the HTTP API and runs only workflow orchestration. Every activity runs in its own independently deployable Micronaut worker service.
 
 | Flow | Shared steps | Unique step |
 | --- | --- | --- |

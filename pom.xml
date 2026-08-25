@@ -29,6 +29,18 @@
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId><version>${jackson.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.micronaut.kotlin</groupId>
+      <artifactId>micronaut-kotlin-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId><version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId><version>${kotlin.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -37,8 +49,36 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>${kotlin.version}</version>
-        <configuration><jvmTarget>${maven.compiler.release}</jvmTarget></configuration>
+        <configuration>
+          <jvmTarget>${maven.compiler.release}</jvmTarget>
+          <compilerPlugins><plugin>all-open</plugin></compilerPlugins>
+          <pluginOptions>
+            <option>all-open:annotation=io.micronaut.aop.Around</option>
+            <option>all-open:annotation=io.micronaut.aop.Introduction</option>
+            <option>all-open:annotation=jakarta.inject.Singleton</option>
+            <option>all-open:annotation=io.micronaut.context.annotation.Context</option>
+            <option>all-open:annotation=io.micronaut.http.annotation.Controller</option>
+          </pluginOptions>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-allopen</artifactId><version>${kotlin.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
+          <execution>
+            <id>kapt</id>
+            <goals><goal>kapt</goal></goals>
+            <configuration>
+              <annotationProcessorPaths>
+                <annotationProcessorPath>
+                  <groupId>io.micronaut</groupId>
+                  <artifactId>micronaut-inject-java</artifactId>
+                </annotationProcessorPath>
+              </annotationProcessorPaths>
+            </configuration>
+          </execution>
           <execution>
             <id>compile</id>
             <phase>compile</phase>
