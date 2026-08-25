@@ -49,6 +49,7 @@ services:
     depends_on:
       - loki
   workflow-service:
+    image: temporal-showcase/workflow-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -66,6 +67,7 @@ services:
       - temporal
       - loki
   validation-service:
+    image: temporal-showcase/validation-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -81,6 +83,7 @@ services:
       - temporal
       - loki
   customer-provisioning-service:
+    image: temporal-showcase/customer-provisioning-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -96,6 +99,7 @@ services:
       - temporal
       - loki
   welcome-email-service:
+    image: temporal-showcase/welcome-email-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -111,6 +115,7 @@ services:
       - temporal
       - loki
   payment-charging-service:
+    image: temporal-showcase/payment-charging-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -126,6 +131,7 @@ services:
       - temporal
       - loki
   receipt-service:
+    image: temporal-showcase/receipt-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile
@@ -141,6 +147,7 @@ services:
       - temporal
       - loki
   client-update-service:
+    image: temporal-showcase/client-update-service:0.1.0
     build:
       context: ../..
       dockerfile: Dockerfile

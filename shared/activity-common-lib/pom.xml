@@ -1,0 +1,5 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent><groupId>com.example</groupId><artifactId>temporal-micronaut-showcase</artifactId><version>0.1.0</version><relativePath>../../pom.xml</relativePath></parent>
+  <artifactId>activity-common-lib</artifactId>
+</project>

@@ -3,18 +3,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.micronaut.platform</groupId><artifactId>micronaut-parent</artifactId><version>5.1.2</version>
+    <groupId>io.micronaut.platform</groupId><artifactId>micronaut-parent</artifactId><version>4.10.17</version>
   </parent>
   <groupId>com.example</groupId><artifactId>temporal-micronaut-showcase</artifactId><version>0.1.0</version><packaging>pom</packaging>
   <properties>
-    <maven.compiler.release>25</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <kotlin.version>2.4.10</kotlin.version>
-    <jackson.version>2.22.2</jackson.version>
+    <!-- Avoid reusing a Kotlin compiler daemon launched by a different JDK. -->
+    <kotlin.compiler.daemon>false</kotlin.compiler.daemon>
+    <!-- Keep every Jackson module aligned with the Micronaut Platform 4.10.17 BOM. -->
+    <jackson.version>2.21.5</jackson.version>
     <temporal.version>1.38.0</temporal.version>
     <loki4j.version>2.1.0</loki4j.version>
   </properties>
   <modules>
-    <module>shared/activity-contracts</module>
+    <module>shared/activity-common-lib</module>
+    <module>shared/validation-lib</module>
+    <module>shared/customer-provisioning-lib</module>
+    <module>shared/welcome-email-lib</module>
+    <module>shared/payment-charging-lib</module>
+    <module>shared/receipt-lib</module>
+    <module>shared/client-update-lib</module>
     <module>shared/activity-utils</module>
     <module>services/workflow-service</module>
     <module>services/validation-service</module>
@@ -24,10 +33,24 @@
     <module>services/receipt-service</module>
     <module>services/client-update-service</module>
   </modules>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Keep core, dataformat, and Kotlin Jackson modules on one compatible release. -->
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId><version>${jackson.version}</version>
+        <type>pom</type><scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId><version>${jackson.version}</version>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-kotlin</artifactId>
     </dependency>
     <dependency>
       <groupId>io.micronaut.kotlin</groupId>
@@ -51,6 +74,10 @@
         <version>${kotlin.version}</version>
         <configuration>
           <jvmTarget>${maven.compiler.release}</jvmTarget>
+          <sourceDirs>
+            <source>src/main/kotlin</source>
+            <source>src/main/java</source>
+          </sourceDirs>
           <compilerPlugins><plugin>all-open</plugin></compilerPlugins>
           <pluginOptions>
             <option>all-open:annotation=io.micronaut.aop.Around</option>
@@ -74,7 +101,7 @@
               <annotationProcessorPaths>
                 <annotationProcessorPath>
                   <groupId>io.micronaut</groupId>
-                  <artifactId>micronaut-inject-java</artifactId>
+                  <artifactId>micronaut-inject-java</artifactId><version>${micronaut.core.version}</version>
                 </annotationProcessorPath>
               </annotationProcessorPaths>
             </configuration>

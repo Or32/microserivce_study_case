@@ -39,13 +39,25 @@ services/
   receipt-service/                Receipt activity worker
   client-update-service/          Final client-update activity worker
 shared/
-  activity-contracts/             Activity interfaces, request types, and workflow results
+  activity-common-lib/            Shared request types, workflow result, and activity metadata
+  validation-lib/                 Validation Temporal activity contract
+  customer-provisioning-lib/      Customer-provisioning Temporal activity contract
+  welcome-email-lib/              Welcome-email Temporal activity contract
+  payment-charging-lib/           Payment-charging Temporal activity contract
+  receipt-lib/                    Receipt Temporal activity contract
+  client-update-lib/              Client-update Temporal activity contract
   activity-utils/                 Activity worker lifecycle and request-logging helpers
 ```
 
 ## Run
 
-Local builds require JDK 25. The included Docker build uses Eclipse Temurin 25.
+Local builds require JDK 21. The included Docker build uses Eclipse Temurin 21. The project setup configures Homebrew's JDK 21 in `~/.zshrc`; open a new terminal (or run `source ~/.zshrc`) and confirm it:
+
+```bash
+java -version
+```
+
+The `make` targets also enforce that same JDK, including when launched from a terminal that was already open before the setup.
 
 Build and start the entire system: Temporal, its UI at <http://localhost:8081>, Loki, Grafana at <http://localhost:3000>, the workflow API, and all activity services:
 
@@ -62,18 +74,20 @@ make infra-down    # Stop containers
 make infra-kill    # Force-stop and remove containers
 ```
 
-The API is available at <http://localhost:8080> once all containers are healthy. For local development without Docker, build the shared modules once, then run the services manually:
+The API is available at <http://localhost:8080> once all containers are healthy. For local development, start only Temporal and its UI, build the reactor once, then run each service in a separate terminal:
 
 ```bash
-./mvnw clean install -DskipTests
+make infra-offline-up
+./mvnw -U clean install -DskipTests
 
-SERVICE_NAME=workflow-service ./mvnw -pl services/workflow-service mn:run
-SERVICE_NAME=validation-service ./mvnw -pl services/validation-service mn:run
-SERVICE_NAME=customer-provisioning-service ./mvnw -pl services/customer-provisioning-service mn:run
-SERVICE_NAME=welcome-email-service ./mvnw -pl services/welcome-email-service mn:run
-SERVICE_NAME=payment-charging-service ./mvnw -pl services/payment-charging-service mn:run
-SERVICE_NAME=receipt-service ./mvnw -pl services/receipt-service mn:run
-SERVICE_NAME=client-update-service ./mvnw -pl services/client-update-service mn:run
+# Run each command in its own terminal.
+make run-workflow
+make run-validation
+make run-customer-provisioning
+make run-welcome-email
+make run-payment-charging
+make run-receipt
+make run-client-update
 ```
 
 Then start a flow:
@@ -85,6 +99,38 @@ curl -X POST localhost:8080/requests/onboarding -H 'Content-Type: application/js
 curl -X POST localhost:8080/requests/payments -H 'Content-Type: application/json' \
   -d '{"requestId":"retry-payment-101","customerId":"cust-9","amountCents":1250}'
 ```
+
+## Air-gapped / on-prem installation
+
+Create the bundle on a connected machine that has the same CPU architecture as the target (or set `IMAGE_PLATFORM`, for example `linux/amd64`). It contains the complete Maven local repository and Maven Wrapper distribution, plus the Temporal, PostgreSQL, Temporal UI, Loki, and Grafana images. It does not build Java modules or service images.
+
+```bash
+make offline-bundle
+# Or, for a typical x86_64 Linux target:
+IMAGE_PLATFORM=linux/amd64 make offline-bundle
+```
+
+Copy the source repository and the generated `offline-bundle/` directory to the on-prem host. The host needs Docker Compose, JDK 21, and no internet access. Load the images and Maven cache:
+
+```bash
+docker load --input offline-bundle/images.tar
+make offline-install-maven-cache
+```
+
+Start the infrastructure without pulling images:
+
+```bash
+make infra-offline-up
+```
+
+For local service development on the disconnected host, Maven will use the installed cache:
+
+```bash
+./mvnw --offline clean install -DskipTests
+make run-validation
+```
+
+For the full Docker-based stack, build the service images on a connected machine, or add them to a separate release-image archive. Recreate this bundle whenever Maven dependencies or infrastructure image versions change.
 
 Use a `requestId` beginning with `retry-` to see one transient validation retry. Use one beginning with `critical-` to produce a non-retryable business failure; the client still gets its final `FAILED` update. These prefixes exist only to make the behavior easy to demonstrate.
 

@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <parent><groupId>com.example</groupId><artifactId>temporal-micronaut-showcase</artifactId><version>0.1.0</version><relativePath>../../pom.xml</relativePath></parent>
-  <artifactId>activity-utils</artifactId>
+  <artifactId>validation-lib</artifactId>
   <dependencies>
     <dependency><groupId>com.example</groupId><artifactId>activity-common-lib</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.micronaut</groupId><artifactId>micronaut-context</artifactId></dependency>
     <dependency><groupId>io.temporal</groupId><artifactId>temporal-sdk</artifactId><version>${temporal.version}</version></dependency>
-    <dependency><groupId>com.github.loki4j</groupId><artifactId>loki-logback-appender</artifactId><version>${loki4j.version}</version></dependency>
   </dependencies>
 </project>

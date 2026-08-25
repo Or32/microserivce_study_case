@@ -22,12 +22,13 @@ class TemporalWorkerConfiguration(
     private val service = WorkflowServiceStubs.newServiceStubs(
         WorkflowServiceStubsOptions.newBuilder().setTarget(target).build(),
     )
-    private val workerFactory: WorkerFactory
-    val workflowClient: WorkflowClient
+    val workflowClient = WorkflowClient.newInstance(
+        service,
+        WorkflowClientOptions.newBuilder().setNamespace(namespace).build(),
+    )
+    private val workerFactory = WorkerFactory.newInstance(workflowClient)
 
     init {
-        workflowClient = WorkflowClient.newInstance(service, WorkflowClientOptions.newBuilder().setNamespace(namespace).build())
-        workerFactory = WorkerFactory.newInstance(workflowClient)
         workerFactory.newWorker(taskQueue).registerWorkflowImplementationTypes(
             OnboardingWorkflowImpl::class.java,
             PaymentWorkflowImpl::class.java,

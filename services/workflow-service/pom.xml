@@ -3,7 +3,13 @@
   <parent><groupId>com.example</groupId><artifactId>temporal-micronaut-showcase</artifactId><version>0.1.0</version><relativePath>../../pom.xml</relativePath></parent>
   <artifactId>workflow-service</artifactId>
   <dependencies>
-    <dependency><groupId>com.example</groupId><artifactId>activity-contracts</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>activity-common-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>validation-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>customer-provisioning-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>welcome-email-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>payment-charging-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>receipt-lib</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>com.example</groupId><artifactId>client-update-lib</artifactId><version>${project.version}</version></dependency>
     <dependency><groupId>io.micronaut</groupId><artifactId>micronaut-http-server-netty</artifactId></dependency>
     <dependency><groupId>io.micronaut</groupId><artifactId>micronaut-jackson-databind</artifactId></dependency>
     <dependency><groupId>io.temporal</groupId><artifactId>temporal-sdk</artifactId><version>${temporal.version}</version></dependency>
