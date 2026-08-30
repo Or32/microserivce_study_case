@@ -9,7 +9,7 @@ CUSTOMER_EMAIL ?= ada@example.com
 CUSTOMER_ID ?= customer-001
 AMOUNT_CENTS ?= 1250
 
-.PHONY: infra-up infra-offline-up infra-local-up infra-down infra-kill infra-logs infra-status offline-bundle offline-install-maven-cache run-workflow run-validation run-customer-provisioning run-welcome-email run-payment-charging run-receipt run-client-update api-ready mock-onboarding mock-payment mock-retry mock-critical
+.PHONY: infra-up infra-offline-up infra-local-up infra-down infra-kill infra-logs infra-status maven-cache offline-bundle offline-install-maven-cache run-workflow run-validation run-customer-provisioning run-welcome-email run-payment-charging run-receipt run-client-update api-ready mock-onboarding mock-payment mock-retry mock-critical
 
 ## Build and start the complete system: Temporal, Grafana, and all services.
 infra-up:
@@ -22,6 +22,10 @@ infra-offline-up:
 ## Start only Temporal and its UI for locally run services.
 infra-local-up:
 	$(COMPOSE) up -d temporal temporal-ui
+
+## Download all Maven dependencies and annotation processors into the local ~/.m2 cache.
+maven-cache:
+	$(MVNW) -B -U dependency:go-offline
 
 ## Create a transferable bundle with the Maven cache and infrastructure container images.
 offline-bundle:

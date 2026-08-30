@@ -15,6 +15,7 @@
     <jackson.version>2.21.5</jackson.version>
     <temporal.version>1.38.0</temporal.version>
     <loki4j.version>2.1.0</loki4j.version>
+    <mssql.jdbc.version>13.4.0.jre11</mssql.jdbc.version>
   </properties>
   <modules>
     <module>shared/activity-common-lib</module>
@@ -65,6 +66,24 @@
       <artifactId>micronaut-data-jdbc</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.micronaut.data</groupId>
+      <artifactId>micronaut-data-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.data</groupId>
+      <artifactId>micronaut-data-tx-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.validation</groupId>
       <artifactId>micronaut-validation</artifactId>
     </dependency>
@@ -73,8 +92,9 @@
       <artifactId>micronaut-management</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>${mssql.jdbc.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -123,6 +143,10 @@
                 <annotationProcessorPath>
                   <groupId>io.micronaut</groupId>
                   <artifactId>micronaut-inject-java</artifactId><version>${micronaut.core.version}</version>
+                </annotationProcessorPath>
+                <annotationProcessorPath>
+                  <groupId>io.micronaut.data</groupId>
+                  <artifactId>micronaut-data-processor</artifactId><version>${micronaut.data.version}</version>
                 </annotationProcessorPath>
               </annotationProcessorPaths>
             </configuration>
